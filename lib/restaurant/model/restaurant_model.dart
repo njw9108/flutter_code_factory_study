@@ -31,7 +31,7 @@ class RestaurantModel {
 
   factory RestaurantModel.fromJson({required Map<String, dynamic> json}) {
     return RestaurantModel(
-      id: '',
+      id: json['id'],
       name: json['name'],
       thumbUrl: 'http://$ip${json['thumbUrl']}',
       tags: List<String>.from(json['tags']),
