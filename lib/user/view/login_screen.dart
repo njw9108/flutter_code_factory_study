@@ -1,13 +1,32 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:code_factory/common/component/custom_text_form_field.dart';
 import 'package:code_factory/common/const/colors.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
+import 'package:code_factory/common/view/root_tab.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  String username = '';
+  String password = '';
+
+  @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+    const emulatorIp = '10.0.2.2:3000';
+    const simulatorIp = '127.0.0.1:3000';
+
+    final ip = Platform.isIOS ? simulatorIp : emulatorIp;
+
     return DefaultLayout(
         child: SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -30,7 +49,9 @@ class LoginScreen extends StatelessWidget {
               ),
               CustomTextFormField(
                 hintText: '이메일을 입력해주세요.',
-                onChanged: (String value) {},
+                onChanged: (String value) {
+                  username = value;
+                },
                 autofocus: true,
               ),
               const SizedBox(
@@ -38,21 +59,59 @@ class LoginScreen extends StatelessWidget {
               ),
               CustomTextFormField(
                 hintText: '비밀번호를 입력해주세요.',
-                onChanged: (String value) {},
+                onChanged: (String value) {
+                  password = value;
+                },
                 obscureText: true,
               ),
               const SizedBox(
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  //ID:비밀번호
+                  final rawString = '$username:$password';
+                  Codec<String, String> stringToBase64 = utf8.fuse(base64);
+
+                  String token = stringToBase64.encode(rawString);
+
+                  final resp = await dio.post(
+                    'http://$ip/auth/login',
+                    options: Options(
+                      headers: {
+                        'authorization': 'Basic $token',
+                      },
+                    ),
+                  );
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => RootTab(),
+                    ),
+                  );
+
+                  print(resp.data);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: PRIMARY_COLOR,
                 ),
                 child: const Text('로그인'),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  const String refreshToken =
+                      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTY3NDg5MDYwMiwiZXhwIjoxNjc0OTc3MDAyfQ.PENhESATRRrDquEKucFRMzM-_DnQf4JlxC0296-KotE';
+                  final resp = await dio.post(
+                    'http://$ip/auth/token',
+                    options: Options(
+                      headers: {
+                        'authorization': 'Bearer $refreshToken',
+                      },
+                    ),
+                  );
+
+                  print(resp.data);
+                },
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.black,
                 ),
