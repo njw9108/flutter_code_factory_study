@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:code_factory/common/component/custom_text_form_field.dart';
 import 'package:code_factory/common/const/colors.dart';
+import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/common/view/root_tab.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -84,14 +86,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   );
 
+                  final accessToken = resp.data['accessToken'];
+                  final refreshToken = resp.data['refreshToken'];
+
+                  await storage.write(
+                      key: REFRESH_TOKEN_KEY, value: refreshToken);
+                  await storage.write(
+                      key: ACCESS_TOKEN_KEY, value: accessToken);
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => RootTab(),
                     ),
                   );
-
-                  print(resp.data);
-                },
+                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: PRIMARY_COLOR,
                 ),
