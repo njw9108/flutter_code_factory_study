@@ -3,7 +3,6 @@ import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/component/product_card.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
-import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -44,11 +43,9 @@ class RestaurantDetailView extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-
             final item = RestaurantDetailModel.fromJson(
-              json: snapshot.data!,
+              snapshot.data!,
             );
-
             return CustomScrollView(
               slivers: [
                 renderTop(
