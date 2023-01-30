@@ -46,7 +46,10 @@ class CustomInterceptor extends Interceptor {
   //2. 응답을 받을때
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    super.onResponse(response, handler);
+    print(
+        '[RES] [${response.requestOptions.method}] [${response.requestOptions.uri}]');
+
+    return super.onResponse(response, handler);
   }
 
   //3. 에러가 났을때
@@ -104,6 +107,7 @@ class CustomInterceptor extends Interceptor {
       return handler.reject(e);
     }
 
-    return super.onError(err, handler);
+    return handler.reject(err);
+    //return super.onError(err, handler);
   }
 }
