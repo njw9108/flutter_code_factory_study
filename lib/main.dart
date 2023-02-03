@@ -1,9 +1,12 @@
 import 'package:code_factory/common/view/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   runApp(
-    const _App(),
+    const ProviderScope(
+      child: _App(),
+    ),
   );
 }
 
