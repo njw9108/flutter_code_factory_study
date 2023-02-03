@@ -1,5 +1,6 @@
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/common/model/cursor_pagination.dart';
+import 'package:code_factory/common/utils/pagination_utils.dart';
 import 'package:code_factory/product/component/product_card.dart';
 import 'package:code_factory/rating/component/rating_card.dart';
 import 'package:code_factory/rating/model/rating_model.dart';
@@ -27,10 +28,22 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 
 class _RestaurantDetailScreenState
     extends ConsumerState<RestaurantDetailScreen> {
+  final ScrollController controller = ScrollController();
+
   @override
   void initState() {
     super.initState();
     ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
+    controller.addListener(scrollerListener);
+  }
+
+  void scrollerListener() {
+    PaginationUtils.paginate(
+      controller: controller,
+      provider: ref.read(
+        restaurantRatingProvider(widget.id).notifier,
+      ),
+    );
   }
 
   @override
@@ -48,6 +61,7 @@ class _RestaurantDetailScreenState
     return DefaultLayout(
       title: '불타는 떡볶이',
       child: CustomScrollView(
+        controller: controller,
         slivers: [
           renderTop(
             model: state,
