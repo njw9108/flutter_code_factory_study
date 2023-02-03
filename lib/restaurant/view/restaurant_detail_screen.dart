@@ -2,6 +2,7 @@ import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/component/product_card.dart';
+import 'package:code_factory/rating/component/rating_card.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
@@ -55,6 +56,20 @@ class _RestaurantDetailScreenState
             renderProducts(
               products: state.products,
             ),
+           SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(
+              child: RatingCard(
+                avatarImage: const AssetImage('asset/img/logo/codefactory_logo.png'),
+                images: [
+                  Image.asset('asset/img/food/ddeok_bok_gi.jpg'),
+                ],
+                rating: 4,
+                email: 'jc@codefactory.ai',
+                content: '맛있습니다.',
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -62,7 +77,7 @@ class _RestaurantDetailScreenState
 
   SliverPadding renderLoading() {
     return SliverPadding(
-      padding: EdgeInsets.all(
+      padding: const EdgeInsets.all(
         16,
       ),
       sliver: SliverList(
@@ -73,15 +88,15 @@ class _RestaurantDetailScreenState
               padding: const EdgeInsets.only(bottom: 32.0),
               child: SkeletonListTile(
                 hasSubtitle: true,
-                leadingStyle: SkeletonAvatarStyle(
+                leadingStyle: const SkeletonAvatarStyle(
                   width: 100,
                   height: 100,
                 ),
-                titleStyle: SkeletonLineStyle(
+                titleStyle: const SkeletonLineStyle(
                   padding: EdgeInsets.all(0),
                   height: 22,
                 ),
-                subtitleStyle: SkeletonLineStyle(
+                subtitleStyle: const SkeletonLineStyle(
                   padding: EdgeInsets.all(0),
                   height: 22,
                 ),
