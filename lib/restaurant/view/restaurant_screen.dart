@@ -1,5 +1,4 @@
-import 'package:code_factory/common/const/data.dart';
-import 'package:code_factory/common/dio/dio.dart';
+import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
@@ -10,33 +9,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class RestaurantScreen extends ConsumerWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
-  Future<List<RestaurantModel>> paginateRestaurant(WidgetRef ref) async {
-    final dio = ref.watch(dioProvider);
-
-    final resp =
-        await RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant')
-            .paginate();
-
-    return resp.data;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: FutureBuilder<List<RestaurantModel>>(
-          future: paginateRestaurant(ref),
-          builder: (context, AsyncSnapshot<List<RestaurantModel>> snapshot) {
+        child: FutureBuilder<CursorPaginationModel<RestaurantModel>>(
+          future: ref.watch(restaurantRepositoryProvider).paginate(),
+          builder: (context,
+              AsyncSnapshot<CursorPaginationModel<RestaurantModel>> snapshot) {
             if (!snapshot.hasData) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
             return ListView.separated(
-              itemCount: snapshot.data!.length,
+              itemCount: snapshot.data!.data.length,
               itemBuilder: (_, index) {
-                final pItem = snapshot.data![index];
+                final pItem = snapshot.data!.data[index];
 
                 return GestureDetector(
                   onTap: () {
