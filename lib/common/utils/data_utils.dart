@@ -20,6 +20,7 @@ class DataUtils {
   }
 
   static DateTime stringToDateTime(String value) {
+    print(value);
     return DateTime.parse(value);
   }
 }

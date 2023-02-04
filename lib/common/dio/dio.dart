@@ -129,7 +129,7 @@ class CustomInterceptor extends Interceptor {
       //그대로 에러를 반환
       return handler.reject(e);
     }
-
+    print(err);
     return handler.reject(err);
     //return super.onError(err, handler);
   }
