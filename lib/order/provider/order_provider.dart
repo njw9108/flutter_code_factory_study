@@ -1,7 +1,6 @@
 import 'package:code_factory/order/model/order_product_model.dart';
 import 'package:code_factory/order/model/post_order_body.dart';
 import 'package:code_factory/order/repository/order_repository.dart';
-import 'package:code_factory/user/model/basket_item_model.dart';
 import 'package:code_factory/user/provider/basket_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -27,7 +26,7 @@ class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
   Future<bool> postOrder() async {
     try {
       const uuid = Uuid();
-      final String id = uuid.v4 as String;
+      final String id = uuid.v4();
       final state = ref.read(basketProvider);
       final resp = await repository.postOrder(
         body: PostOrderBody(
@@ -48,7 +47,9 @@ class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
         ),
       );
       return true;
-    } catch (e) {
+    } catch (e,stack) {
+      print(e);
+      print(stack);
       return false;
     }
   }

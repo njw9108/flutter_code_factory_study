@@ -19,7 +19,10 @@ class DataUtils {
     return encoded;
   }
 
-  static DateTime stringToDateTime(String value) {
-    return DateTime.parse(value);
+  static DateTime stringToDateTime(String? value) {
+    if (value == null) {
+      print('value is null');
+    }
+    return value == null ? DateTime.now() : DateTime.parse(value);
   }
 }

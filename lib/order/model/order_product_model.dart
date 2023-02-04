@@ -54,14 +54,14 @@ class OrderModel implements IModelWithId {
   @JsonKey(
     fromJson: DataUtils.stringToDateTime,
   )
-  final DateTime createAt;
+  final DateTime? createdAt;
 
   OrderModel({
     required this.id,
     required this.products,
     required this.totalPrice,
     required this.restaurant,
-    required this.createAt,
+    required this.createdAt,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>
