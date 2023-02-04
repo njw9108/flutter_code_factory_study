@@ -31,13 +31,13 @@ abstract class UserMeRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<BasketItemModel> getBasket();
+  Future<List<BasketItemModel>> getBasket();
 
   @PATCH('/basket')
   @Headers({
     'accessToken': 'true',
   })
-  Future<BasketItemModel> patchBasket({
+  Future<List<BasketItemModel>> patchBasket({
     @Body() required PatchBasketBody body,
   });
 }

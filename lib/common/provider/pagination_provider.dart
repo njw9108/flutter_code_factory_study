@@ -114,8 +114,6 @@ class PaginationProvider<T extends IModelWithId,
         state = resp;
       }
     } catch (e,stack) {
-      print(e);
-      print(stack);
       state = CursorPaginationError(errMessage: '데이터를 가져오지 못했습니다.');
     }
   }
