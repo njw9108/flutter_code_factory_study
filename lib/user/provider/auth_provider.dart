@@ -1,5 +1,6 @@
 import 'package:code_factory/common/view/root_tab.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/restaurant/view/basket_screen.dart';
 import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
 import 'package:code_factory/user/model/user_model.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
@@ -52,6 +53,11 @@ class AuthProvider extends ChangeNotifier {
           path: '/login',
           name: LoginScreen.routeName,
           builder: (_, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/basket',
+          name: BasketScreen.routeName,
+          builder: (_, state) => const BasketScreen(),
         ),
       ];
 
