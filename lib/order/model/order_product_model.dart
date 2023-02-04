@@ -54,7 +54,7 @@ class OrderModel implements IModelWithId {
   @JsonKey(
     fromJson: DataUtils.stringToDateTime,
   )
-  final DateTime? createdAt;
+  final DateTime createdAt;
 
   OrderModel({
     required this.id,
