@@ -2,6 +2,7 @@ import 'package:code_factory/common/const/colors.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/view/product_screen.dart';
 import 'package:code_factory/restaurant/view/restaurant_screen.dart';
+import 'package:code_factory/user/view/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class RootTab extends StatefulWidget {
@@ -79,7 +80,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           RestaurantScreen(),
           ProductScreen(),
           Center(child: Text('주문')),
-          Center(child: Text('프로필')),
+          ProfileScreen(),
         ],
       ),
     );
