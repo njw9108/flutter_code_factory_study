@@ -14,7 +14,7 @@ class RestaurantScreenBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<RestaurantModel> data =
-        context.watch<RestaurantProvider>().restaurantModels;
+        context.watch<RestaurantProvider>().restaurants;
 
     if (data.isEmpty) {
       return const Center(
