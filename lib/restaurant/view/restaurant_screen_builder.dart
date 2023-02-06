@@ -1,12 +1,10 @@
-import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
-import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 
 class RestaurantScreenBuilder extends StatelessWidget {
-  final Widget Function(
-      BuildContext, AsyncSnapshot<CursorPagination<RestaurantModel>>) builder;
+  final Widget Function(BuildContext, List<RestaurantModel>) builder;
 
   const RestaurantScreenBuilder({
     Key? key,
@@ -15,24 +13,20 @@ class RestaurantScreenBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: FutureBuilder<CursorPagination<RestaurantModel>>(
-          future: context.watch<RestaurantRepository>().paginate(),
-          builder: (context,
-              AsyncSnapshot<CursorPagination<RestaurantModel>> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return builder(
-              context,
-              snapshot,
-            );
-          },
-        ),
+    final List<RestaurantModel> data =
+        context.watch<RestaurantProvider>().restaurantModels;
+
+    if (data.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: builder(
+        context,
+        data,
       ),
     );
   }

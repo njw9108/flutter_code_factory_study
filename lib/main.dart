@@ -1,6 +1,7 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,8 @@ class _App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => const FlutterSecureStorage()),
+        Provider<FlutterSecureStorage>(
+            create: (_) => const FlutterSecureStorage()),
         ProxyProvider<FlutterSecureStorage, Dio>(
           create: (_) => Dio(),
           update: (BuildContext context, storage, Dio? previous) {
@@ -39,6 +41,12 @@ class _App extends StatelessWidget {
             final repository =
                 RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
             return repository;
+          },
+        ),
+        ChangeNotifierProvider<RestaurantProvider>(
+          create: (context) {
+            final repository = context.read<RestaurantRepository>();
+            return RestaurantProvider(repository: repository);
           },
         ),
       ],

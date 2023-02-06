@@ -5,7 +5,7 @@ import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class RestaurantScreen extends StatelessWidget {
-  final AsyncSnapshot<CursorPagination<RestaurantModel>> restaurantModels;
+  final List<RestaurantModel> restaurantModels;
 
   const RestaurantScreen({
     Key? key,
@@ -15,9 +15,9 @@ class RestaurantScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: restaurantModels.data!.data.length,
+      itemCount: restaurantModels.length,
       itemBuilder: (_, index) {
-        final pItem = restaurantModels.data!.data[index];
+        final pItem = restaurantModels[index];
 
         return GestureDetector(
           onTap: () {
