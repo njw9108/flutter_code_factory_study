@@ -11,7 +11,7 @@ class RestaurantProvider with ChangeNotifier {
     paginate();
   }
 
-  CursorPaginationBase restaurants = CursorPaginationLoading();
+  CursorPaginationBase restaurantCursorPagination = CursorPaginationLoading();
 
   Future<void> paginate({
     int fetchCount = 20,
@@ -35,6 +35,28 @@ class RestaurantProvider with ChangeNotifier {
 
     //5)CursorPaginationFetchMore - 추가 데이터를 pagination 하라는 요청을 받았을때
 
+    //바로 반환하는 상황
+    //1) hasMore = false(기존 상태에서 이미 다음 데이터가 없다는 값을 들고 있다면)
+    //2) 로딩중 - featchMore가 true일때(추가 데이터를 가져오는 상황)
+    //        - fetchMore가 false일때는 기존 요청을 멈추고 새로고침을 한다.
+    if (restaurantCursorPagination is CursorPagination && !forceRefetch) {
+      final pState = restaurantCursorPagination as CursorPagination;
+      if (!pState.meta.hasMore) {
+        return;
+      }
+    }
+
+    //3가지 로딩 상태
+    final isLoading = restaurantCursorPagination is CursorPaginationLoading;
+    final isRefetching =
+        restaurantCursorPagination is CursorPaginationRefetching;
+    final isFetchingMore =
+        restaurantCursorPagination is CursorPaginationFetchingMore;
+
+    //2번 반환 상황
+    if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
+      return;
+    }
 
     notifyListeners();
   }

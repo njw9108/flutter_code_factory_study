@@ -15,7 +15,7 @@ class RestaurantScreenBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CursorPaginationBase data =
-        context.watch<RestaurantProvider>().restaurants;
+        context.watch<RestaurantProvider>().restaurantCursorPagination;
 
     if (data is CursorPaginationLoading) {
       return const Center(
