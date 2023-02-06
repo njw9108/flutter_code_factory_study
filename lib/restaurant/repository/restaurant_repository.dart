@@ -1,3 +1,4 @@
+import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';

@@ -18,24 +18,13 @@ class RestaurantDetailScreen extends StatelessWidget {
     required this.id,
   }) : super(key: key);
 
-  Future<RestaurantDetailModel> getRestaurantDetail(
-      BuildContext context) async {
-    final dio = context.read<Dio>();
-
-    final repository = RestaurantRepository(
-      dio,
-      baseUrl: 'http://$ip/restaurant',
-    );
-
-    return repository.getRestaurantDetail(id: id);
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '불타는 떡볶이',
       child: FutureBuilder<RestaurantDetailModel>(
-          future: getRestaurantDetail(context),
+          future:
+              context.watch<RestaurantRepository>().getRestaurantDetail(id: id),
           builder: (context, AsyncSnapshot<RestaurantDetailModel> snapshot) {
             if (!snapshot.hasData) {
               return const Center(

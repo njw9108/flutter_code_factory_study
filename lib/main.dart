@@ -1,5 +1,7 @@
+import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,6 +29,16 @@ class _App extends StatelessWidget {
               CustomInterceptor(storage: storage),
             );
             return dio;
+          },
+        ),
+        ProxyProvider<Dio, RestaurantRepository>(
+          create: (context) => RestaurantRepository(Dio()),
+          update:
+              (BuildContext context, value, RestaurantRepository? previous) {
+            final dio = context.watch<Dio>();
+            final repository =
+                RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
+            return repository;
           },
         ),
       ],
