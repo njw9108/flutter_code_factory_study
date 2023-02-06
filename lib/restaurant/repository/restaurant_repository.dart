@@ -1,5 +1,5 @@
-import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
+import 'package:code_factory/common/model/pagination_params.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -16,7 +16,9 @@ abstract class RestaurantRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<CursorPagination<RestaurantModel>> paginate();
+  Future<CursorPagination<RestaurantModel>> paginate({
+    @Queries() PaginationParams? params = const PaginationParams(),
+  });
 
   @GET('/{id}')
   @Headers({
