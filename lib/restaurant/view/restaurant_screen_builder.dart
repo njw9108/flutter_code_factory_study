@@ -1,3 +1,4 @@
+import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,20 +14,28 @@ class RestaurantScreenBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<RestaurantModel> data =
+    final CursorPaginationBase data =
         context.watch<RestaurantProvider>().restaurants;
 
-    if (data.isEmpty) {
+    if (data is CursorPaginationLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
+    if (data is CursorPaginationError) {
+      return const Center(
+        child: Text('에러입니다.'),
+      );
+    }
+
+    //Cursor Pagination
+    final cp = data as CursorPagination<RestaurantModel>;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: builder(
         context,
-        data,
+        cp.data,
       ),
     );
   }
