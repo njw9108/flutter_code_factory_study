@@ -1,4 +1,5 @@
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
+import 'package:code_factory/common/model/pagination_params.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -56,6 +57,40 @@ class RestaurantProvider with ChangeNotifier {
     //2번 반환 상황
     if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
       return;
+    }
+
+    // Pagination Params 생성
+    PaginationParams params = PaginationParams(count: fetchCount);
+
+    // fetching More 상황
+    // 데이터를 추가로 더 가져오는 상황
+    if (fetchMore) {
+      final pState = restaurantCursorPagination as CursorPagination;
+
+      restaurantCursorPagination = CursorPaginationFetchingMore(
+        meta: pState.meta,
+        data: pState.data,
+      );
+
+      params = params.copyWith(
+        after: pState.data.last.id,
+      );
+    }
+
+    final resp = await repository.paginate(
+      params: params,
+    );
+
+    if (restaurantCursorPagination is CursorPaginationFetchingMore) {
+      final pState = restaurantCursorPagination as CursorPaginationFetchingMore;
+
+      //기존 데이터에 새로운 데이터 추가
+      restaurantCursorPagination = resp.copyWith(
+        data: [
+          ...pState.data,
+          ...resp.data,
+        ],
+      );
     }
 
     notifyListeners();
