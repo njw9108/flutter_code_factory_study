@@ -21,13 +21,6 @@ class RestaurantDetailScreen extends StatelessWidget {
   Future<RestaurantDetailModel> getRestaurantDetail(
       BuildContext context) async {
     final dio = context.read<Dio>();
-    final storage = context.read<FlutterSecureStorage>();
-
-    dio.interceptors.add(
-      CustomInterceptor(
-        storage: storage,
-      ),
-    );
 
     final repository = RestaurantRepository(
       dio,

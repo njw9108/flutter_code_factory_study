@@ -14,11 +14,6 @@ class RestaurantScreen extends StatelessWidget {
 
   Future<List<RestaurantModel>> paginateRestaurant(BuildContext context) async {
     final dio = context.read<Dio>();
-    final storage = context.read<FlutterSecureStorage>();
-
-    dio.interceptors.add(
-      CustomInterceptor(storage: storage),
-    );
 
     final resp =
         await RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant')
