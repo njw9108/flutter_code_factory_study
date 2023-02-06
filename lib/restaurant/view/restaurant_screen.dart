@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class RestaurantScreen extends StatefulWidget {
-  final List<RestaurantModel> restaurantModels;
+  final CursorPaginationBase paginationData;
 
   const RestaurantScreen({
     Key? key,
-    required this.restaurantModels,
+    required this.paginationData,
   }) : super(key: key);
 
   @override
@@ -43,11 +43,26 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cp = widget.paginationData as CursorPagination;
+
     return ListView.separated(
       controller: controller,
-      itemCount: widget.restaurantModels.length,
+      itemCount: cp.data.length + 1,
       itemBuilder: (_, index) {
-        final pItem = widget.restaurantModels[index];
+        if (index == cp.data.length) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8,
+            ),
+            child: Center(
+              child: widget.paginationData is CursorPaginationFetchingMore
+                  ? const CircularProgressIndicator()
+                  : const Text('마지막 데이터 입니다.'),
+            ),
+          );
+        }
+        final pItem = cp.data[index];
 
         return GestureDetector(
           onTap: () {

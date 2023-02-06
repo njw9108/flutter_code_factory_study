@@ -75,6 +75,7 @@ class RestaurantProvider with ChangeNotifier {
           meta: pState.meta,
           data: pState.data,
         );
+        notifyListeners();
 
         params = params.copyWith(
           after: pState.data.last.id,
@@ -91,9 +92,12 @@ class RestaurantProvider with ChangeNotifier {
             meta: pState.meta,
             data: pState.data,
           );
+          notifyListeners();
+
         } else {
           //나머지 상황
           restaurantCursorPagination = CursorPaginationLoading();
+          notifyListeners();
         }
       }
 
@@ -112,14 +116,16 @@ class RestaurantProvider with ChangeNotifier {
             ...resp.data,
           ],
         );
+        notifyListeners();
+
       } else {
         restaurantCursorPagination = resp;
+        notifyListeners();
       }
     } catch (e) {
       restaurantCursorPagination =
           CursorPaginationError(message: '데이터를 가져오지 못했습니다.');
+      notifyListeners();
     }
-
-    notifyListeners();
   }
 }

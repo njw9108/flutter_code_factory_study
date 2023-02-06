@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 
 class RestaurantScreenBuilder extends StatelessWidget {
-  final Widget Function(BuildContext, List<RestaurantModel>) builder;
+  final Widget Function(BuildContext, CursorPaginationBase) builder;
 
   const RestaurantScreenBuilder({
     Key? key,
@@ -14,7 +14,7 @@ class RestaurantScreenBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CursorPaginationBase data =
+    final data =
         context.watch<RestaurantProvider>().restaurantCursorPagination;
 
     if (data is CursorPaginationLoading) {
@@ -32,12 +32,12 @@ class RestaurantScreenBuilder extends StatelessWidget {
     //Cursor Pagination
     //Cursor PaginationFetchingMore
     //Cursor PaginationRefetching
-    final cp = data as CursorPagination;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: builder(
         context,
-        cp.data as List<RestaurantModel>,
+        data,
       ),
     );
   }
