@@ -5,6 +5,8 @@ import 'package:code_factory/common/view/root_tab.dart';
 import 'package:code_factory/user/view/login_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -20,15 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     checkToken();
   }
-
-  void deleteToken() async {
-    await storage.deleteAll();
-  }
-
   void checkToken() async {
+    final storage = context.read<FlutterSecureStorage>();
+
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
 
-    final dio = Dio();
+    final Dio dio = context.read<Dio>();
     try {
       final resp = await dio.post(
         'http://$ip/auth/token',

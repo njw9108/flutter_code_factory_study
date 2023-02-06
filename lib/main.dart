@@ -1,5 +1,9 @@
+import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(
@@ -12,12 +16,27 @@ class _App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'NotoSans',
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => const FlutterSecureStorage()),
+        ProxyProvider<FlutterSecureStorage, Dio>(
+          create: (_) => Dio(),
+          update: (BuildContext context, storage, Dio? previous) {
+            final dio = Dio();
+            dio.interceptors.add(
+              CustomInterceptor(storage: storage),
+            );
+            return dio;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'NotoSans',
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const SplashScreen(),
       ),
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
     );
   }
 }

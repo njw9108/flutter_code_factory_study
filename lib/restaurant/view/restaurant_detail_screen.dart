@@ -7,6 +7,8 @@ import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
   final String id;
@@ -16,8 +18,10 @@ class RestaurantDetailScreen extends StatelessWidget {
     required this.id,
   }) : super(key: key);
 
-  Future<RestaurantDetailModel> getRestaurantDetail() async {
-    final dio = Dio();
+  Future<RestaurantDetailModel> getRestaurantDetail(
+      BuildContext context) async {
+    final dio = context.read<Dio>();
+    final storage = context.read<FlutterSecureStorage>();
 
     dio.interceptors.add(
       CustomInterceptor(
@@ -38,7 +42,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     return DefaultLayout(
       title: '불타는 떡볶이',
       child: FutureBuilder<RestaurantDetailModel>(
-          future: getRestaurantDetail(),
+          future: getRestaurantDetail(context),
           builder: (context, AsyncSnapshot<RestaurantDetailModel> snapshot) {
             if (!snapshot.hasData) {
               return const Center(

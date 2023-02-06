@@ -6,12 +6,15 @@ import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class RestaurantScreen extends StatelessWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
-  Future<List<RestaurantModel>> paginateRestaurant() async {
-    final dio = Dio();
+  Future<List<RestaurantModel>> paginateRestaurant(BuildContext context) async {
+    final dio = context.read<Dio>();
+    final storage = context.read<FlutterSecureStorage>();
 
     dio.interceptors.add(
       CustomInterceptor(storage: storage),
@@ -30,7 +33,7 @@ class RestaurantScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: FutureBuilder<List<RestaurantModel>>(
-          future: paginateRestaurant(),
+          future: paginateRestaurant(context),
           builder: (context, AsyncSnapshot<List<RestaurantModel>> snapshot) {
             if (!snapshot.hasData) {
               return const Center(

@@ -7,6 +7,8 @@ import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/common/view/root_tab.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,8 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
-
     return DefaultLayout(
         child: SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -65,6 +65,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  final storage = context.read<FlutterSecureStorage>();
+                  final dio = context.read<Dio>();
+
+
                   //ID:비밀번호
                   final rawString = '$username:$password';
                   Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -82,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   final accessToken = resp.data['accessToken'];
                   final refreshToken = resp.data['refreshToken'];
+
 
                   await storage.write(
                       key: REFRESH_TOKEN_KEY, value: refreshToken);
