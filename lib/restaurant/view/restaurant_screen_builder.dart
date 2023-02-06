@@ -24,18 +24,20 @@ class RestaurantScreenBuilder extends StatelessWidget {
     }
 
     if (data is CursorPaginationError) {
-      return const Center(
-        child: Text('에러입니다.'),
+      return Center(
+        child: Text(data.message),
       );
     }
 
     //Cursor Pagination
-    final cp = data as CursorPagination<RestaurantModel>;
+    //Cursor PaginationFetchingMore
+    //Cursor PaginationRefetching
+    final cp = data as CursorPagination;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: builder(
         context,
-        cp.data,
+        cp.data as List<RestaurantModel>,
       ),
     );
   }
