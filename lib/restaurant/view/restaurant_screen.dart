@@ -1,4 +1,5 @@
 import 'package:code_factory/common/const/data.dart';
+import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
@@ -10,6 +11,10 @@ class RestaurantScreen extends StatelessWidget {
 
   Future<List> paginateRestaurant() async {
     final dio = Dio();
+
+    dio.interceptors.add(
+      CustomInterceptor(storage: storage),
+    );
 
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
