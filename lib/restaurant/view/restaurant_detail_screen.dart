@@ -45,7 +45,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
     }
 
     return DefaultLayout(
-      title: '불타는 떡볶이',
+      title: model.name,
       child: CustomScrollView(
         slivers: [
           renderTop(
