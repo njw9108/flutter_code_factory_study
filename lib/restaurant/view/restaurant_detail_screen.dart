@@ -1,15 +1,11 @@
-import 'package:code_factory/common/const/data.dart';
-import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/component/product_card.dart';
+import 'package:code_factory/rating/component/rating_card.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
-import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -58,6 +54,18 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
             renderProducts(
               products: model.products,
             ),
+          const SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(
+              child: RatingCard(
+                avatarImage: AssetImage('asset/img/logo/codefactory_logo.png'),
+                images: [],
+                rating: 4,
+                email: 'njw9108@naver.com',
+                content: '맛있습니다.',
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -65,7 +73,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
   SliverPadding renderLoading() {
     return SliverPadding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
           List.generate(
@@ -73,7 +81,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
             (index) => Padding(
               padding: const EdgeInsets.only(bottom: 32.0),
               child: SkeletonParagraph(
-                style: SkeletonParagraphStyle(
+                style: const SkeletonParagraphStyle(
                   lines: 4,
                   padding: EdgeInsets.zero,
                 ),
