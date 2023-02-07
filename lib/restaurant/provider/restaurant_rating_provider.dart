@@ -1,29 +1,17 @@
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/common/model/pagination_params.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
-import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
+import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:flutter/material.dart';
 
-class RestaurantProvider with ChangeNotifier {
-  final RestaurantRepository repository;
+class RestaurantRatingProvider with ChangeNotifier {
+  final RestaurantRatingRepository repository;
 
-  RestaurantProvider({
+  RestaurantRatingProvider({
     required this.repository,
-  }) {
-    paginate();
-  }
+  });
 
   CursorPaginationBase cursorState = CursorPaginationLoading();
-
-  RestaurantModel? getRestaurantDetail({required String id}) {
-    if (cursorState is! CursorPagination) {
-      return null;
-    }
-
-    final pState = cursorState as CursorPagination;
-
-    return pState.data.firstWhere((element) => element.id == id);
-  }
 
   Future<void> paginate({
     int fetchCount = 20,
@@ -52,10 +40,8 @@ class RestaurantProvider with ChangeNotifier {
       //1) hasMore = false(기존 상태에서 이미 다음 데이터가 없다는 값을 들고 있다면)
       //2) 로딩중 - featchMore가 true일때(추가 데이터를 가져오는 상황)
       //        - fetchMore가 false일때는 기존 요청을 멈추고 새로고침을 한다.
-      if (cursorState is CursorPagination<RestaurantModel> &&
-          !forceRefetch) {
-        final pState =
-            cursorState as CursorPagination<RestaurantModel>;
+      if (cursorState is CursorPagination<RestaurantModel> && !forceRefetch) {
+        final pState = cursorState as CursorPagination<RestaurantModel>;
         if (!pState.meta.hasMore) {
           return;
         }
@@ -63,10 +49,8 @@ class RestaurantProvider with ChangeNotifier {
 
       //3가지 로딩 상태
       final isLoading = cursorState is CursorPaginationLoading;
-      final isRefetching =
-          cursorState is CursorPaginationRefetching;
-      final isFetchingMore =
-          cursorState is CursorPaginationFetchingMore;
+      final isRefetching = cursorState is CursorPaginationRefetching;
+      final isFetchingMore = cursorState is CursorPaginationFetchingMore;
 
       //2번 반환 상황
       if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
@@ -115,8 +99,7 @@ class RestaurantProvider with ChangeNotifier {
       );
 
       if (cursorState is CursorPaginationFetchingMore) {
-        final pState =
-            cursorState as CursorPaginationFetchingMore;
+        final pState = cursorState as CursorPaginationFetchingMore;
 
         //기존 데이터에 새로운 데이터 추가
         cursorState = resp.copyWith(
@@ -131,35 +114,8 @@ class RestaurantProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      cursorState =
-          CursorPaginationError(message: '데이터를 가져오지 못했습니다.');
+      cursorState = CursorPaginationError(message: '데이터를 가져오지 못했습니다.');
       notifyListeners();
     }
-  }
-
-  Future<void> getDetail({required String id}) async {
-    // 아직 데이터가 하나도 없는 상태라 (state가 CursorPagination이 아니라면)
-    // 데이터를 가져오는 시도를 한다.
-    if (cursorState is! CursorPagination) {
-      await paginate();
-    }
-
-    // state가 CursorPagination이 아닐때 그냥 리턴
-    if (cursorState is! CursorPagination) {
-      return;
-    }
-
-    final pState = cursorState as CursorPagination;
-
-    final resp = await repository.getRestaurantDetail(id: id);
-
-    cursorState = pState.copyWith(
-      data: pState.data
-          .map<RestaurantModel>(
-            (e) => e.id == id ? resp : e,
-          )
-          .toList(),
-    );
-    notifyListeners();
   }
 }

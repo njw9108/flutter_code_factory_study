@@ -5,6 +5,7 @@ import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
+import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';

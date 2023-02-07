@@ -2,6 +2,7 @@ import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
+import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';

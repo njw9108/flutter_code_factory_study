@@ -1,8 +1,12 @@
+import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
+import 'package:code_factory/restaurant/provider/restaurant_rating_provider.dart';
+import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -69,8 +73,30 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RestaurantDetailScreen(
-                  id: pItem.id,
+                builder: (context) => MultiProvider(
+                  providers: [
+                    ProxyProvider<Dio, RestaurantRatingRepository>(
+                      update: (BuildContext context, value,
+                          RestaurantRatingRepository? previous) {
+                        final dio = context.watch<Dio>();
+                        final repository = RestaurantRatingRepository(
+                          dio,
+                          baseUrl: 'http://$ip/restaurant/${pItem.id}/rating',
+                        );
+                        return repository;
+                      },
+                    ),
+                    ChangeNotifierProvider<RestaurantRatingProvider>(
+                      create: (context) {
+                        final repository =
+                            context.read<RestaurantRatingRepository>();
+                        return RestaurantRatingProvider(repository: repository);
+                      },
+                    ),
+                  ],
+                  child: RestaurantDetailScreen(
+                    id: pItem.id,
+                  ),
                 ),
               ),
             );
