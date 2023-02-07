@@ -24,7 +24,6 @@ class _App extends StatelessWidget {
         Provider<FlutterSecureStorage>(
             create: (_) => const FlutterSecureStorage()),
         ProxyProvider<FlutterSecureStorage, Dio>(
-          create: (_) => Dio(),
           update: (BuildContext context, storage, Dio? previous) {
             final dio = Dio();
             dio.interceptors.add(
@@ -34,7 +33,6 @@ class _App extends StatelessWidget {
           },
         ),
         ProxyProvider<Dio, RestaurantRepository>(
-          create: (context) => RestaurantRepository(Dio()),
           update:
               (BuildContext context, value, RestaurantRepository? previous) {
             final dio = context.watch<Dio>();

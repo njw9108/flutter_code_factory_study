@@ -4,6 +4,8 @@ import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/component/product_card.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
+import 'package:code_factory/restaurant/model/restaurant_model.dart';
+import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,29 +22,30 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<RestaurantProvider>();
+    final model = provider.getRestaurantDetail(id);
+
+    if (model == null) {
+      return const DefaultLayout(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return DefaultLayout(
       title: '불타는 떡볶이',
-      child: FutureBuilder<RestaurantDetailModel>(
-          future:
-              context.watch<RestaurantRepository>().getRestaurantDetail(id: id),
-          builder: (context, AsyncSnapshot<RestaurantDetailModel> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return CustomScrollView(
-              slivers: [
-                renderTop(
-                  model: snapshot.data!,
-                ),
-                renderLabel(),
-                renderProducts(
-                  products: snapshot.data!.products,
-                ),
-              ],
-            );
-          }),
+      child: CustomScrollView(
+        slivers: [
+          renderTop(
+            model: model,
+          ),
+          // renderLabel(),
+          // renderProducts(
+          //   products: model.products,
+          // ),
+        ],
+      ),
     );
   }
 
@@ -84,7 +87,7 @@ class RestaurantDetailScreen extends StatelessWidget {
   }
 
   Widget renderTop({
-    required RestaurantDetailModel model,
+    required RestaurantModel model,
   }) {
     return SliverToBoxAdapter(
       child: RestaurantCard.fromModel(

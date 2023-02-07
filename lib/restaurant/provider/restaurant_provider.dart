@@ -15,6 +15,16 @@ class RestaurantProvider with ChangeNotifier {
 
   CursorPaginationBase restaurantCursorPagination = CursorPaginationLoading();
 
+  RestaurantModel? getRestaurantDetail(String id) {
+    if (restaurantCursorPagination is! CursorPagination) {
+      return null;
+    }
+
+    final pState = restaurantCursorPagination as CursorPagination;
+
+    return pState.data.firstWhere((element) => element.id == id);
+  }
+
   Future<void> paginate({
     int fetchCount = 20,
     //true인 경우 추가로 데이터 더 가져오기,
@@ -93,7 +103,6 @@ class RestaurantProvider with ChangeNotifier {
             data: pState.data,
           );
           notifyListeners();
-
         } else {
           //나머지 상황
           restaurantCursorPagination = CursorPaginationLoading();
@@ -117,7 +126,6 @@ class RestaurantProvider with ChangeNotifier {
           ],
         );
         notifyListeners();
-
       } else {
         restaurantCursorPagination = resp;
         notifyListeners();
