@@ -1,5 +1,4 @@
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
-import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';

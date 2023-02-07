@@ -1,7 +1,6 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
-import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/provider/restaurant_rating_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
