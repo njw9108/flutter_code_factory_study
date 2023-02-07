@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends StatefulWidget {
   final String id;
@@ -51,6 +52,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
           renderTop(
             model: model,
           ),
+          if (model is! RestaurantDetailModel) renderLoading(),
           if (model is RestaurantDetailModel) renderLabel(),
           if (model is RestaurantDetailModel)
             renderProducts(
@@ -61,7 +63,29 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
     );
   }
 
-  Widget renderLabel() {
+  SliverPadding renderLoading() {
+    return SliverPadding(
+      padding: EdgeInsets.all(16),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          List.generate(
+            3,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              child: SkeletonParagraph(
+                style: SkeletonParagraphStyle(
+                  lines: 4,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverPadding renderLabel() {
     return const SliverPadding(
       padding: EdgeInsets.symmetric(
         horizontal: 16,

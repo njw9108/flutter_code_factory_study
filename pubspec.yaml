@@ -42,6 +42,7 @@ dependencies:
   retrofit: '>=3.0.0 <4.0.0'
   logger: any
   provider: ^6.0.5
+  skeletons: ^0.0.3
 
 
 dev_dependencies:
