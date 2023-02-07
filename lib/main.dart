@@ -1,6 +1,8 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
 import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/product/provider/product_provider.dart';
+import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
@@ -36,7 +38,7 @@ class _App extends StatelessWidget {
         ProxyProvider<Dio, RestaurantRepository>(
           update:
               (BuildContext context, value, RestaurantRepository? previous) {
-            final dio = context.watch<Dio>();
+            final dio = context.read<Dio>();
             final repository =
                 RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
             return repository;
@@ -46,6 +48,20 @@ class _App extends StatelessWidget {
           create: (context) {
             final repository = context.read<RestaurantRepository>();
             return RestaurantProvider(repository: repository);
+          },
+        ),
+        ProxyProvider<Dio, ProductRepository>(
+          update: (BuildContext context, value, ProductRepository? previous) {
+            final dio = context.read<Dio>();
+            final repository =
+                ProductRepository(dio, baseUrl: 'http://$ip/product');
+            return repository;
+          },
+        ),
+        ChangeNotifierProvider<ProductProvider>(
+          create: (context) {
+            final repository = context.read<ProductRepository>();
+            return ProductProvider(repository: repository);
           },
         ),
       ],
