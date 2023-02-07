@@ -9,7 +9,7 @@ class RestaurantProvider
     required super.repository,
   });
 
-  RestaurantModel? getRestaurantDetail({required String id}) {
+  RestaurantModel? getRestaurantDetailModel({required String id}) {
     if (cursorState is! CursorPagination) {
       return null;
     }
