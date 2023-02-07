@@ -2,7 +2,7 @@ import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/common/model/pagination_params.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class RestaurantProvider with ChangeNotifier {
   final RestaurantRepository repository;
