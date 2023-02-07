@@ -15,7 +15,7 @@ class RestaurantProvider with ChangeNotifier {
 
   CursorPaginationBase restaurantCursorPagination = CursorPaginationLoading();
 
-  RestaurantModel? getRestaurantDetail(String id) {
+  RestaurantModel? getRestaurantDetail({required String id}) {
     if (restaurantCursorPagination is! CursorPagination) {
       return null;
     }
@@ -135,5 +135,31 @@ class RestaurantProvider with ChangeNotifier {
           CursorPaginationError(message: '데이터를 가져오지 못했습니다.');
       notifyListeners();
     }
+  }
+
+  Future<void> getDetail({required String id}) async {
+    // 아직 데이터가 하나도 없는 상태라 (state가 CursorPagination이 아니라면)
+    // 데이터를 가져오는 시도를 한다.
+    if (restaurantCursorPagination is! CursorPagination) {
+      await paginate();
+    }
+
+    // state가 CursorPagination이 아닐때 그냥 리턴
+    if (restaurantCursorPagination is! CursorPagination) {
+      return;
+    }
+
+    final pState = restaurantCursorPagination as CursorPagination;
+
+    final resp = await repository.getRestaurantDetail(id: id);
+
+    restaurantCursorPagination = pState.copyWith(
+      data: pState.data
+          .map<RestaurantModel>(
+            (e) => e.id == id ? resp : e,
+          )
+          .toList(),
+    );
+    notifyListeners();
   }
 }

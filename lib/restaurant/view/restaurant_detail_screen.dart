@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
-class RestaurantDetailScreen extends StatelessWidget {
+class RestaurantDetailScreen extends StatefulWidget {
   final String id;
 
   const RestaurantDetailScreen({
@@ -21,9 +21,20 @@ class RestaurantDetailScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<RestaurantDetailScreen> createState() => _RestaurantDetailScreenState();
+}
+
+class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<RestaurantProvider>().getDetail(id: widget.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = context.watch<RestaurantProvider>();
-    final model = provider.getRestaurantDetail(id);
+    final model = provider.getRestaurantDetail(id: widget.id);
 
     if (model == null) {
       return const DefaultLayout(
@@ -40,10 +51,11 @@ class RestaurantDetailScreen extends StatelessWidget {
           renderTop(
             model: model,
           ),
-          // renderLabel(),
-          // renderProducts(
-          //   products: model.products,
-          // ),
+          if (model is RestaurantDetailModel) renderLabel(),
+          if (model is RestaurantDetailModel)
+            renderProducts(
+              products: model.products,
+            ),
         ],
       ),
     );
