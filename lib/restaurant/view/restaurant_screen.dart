@@ -1,5 +1,6 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
+import 'package:code_factory/common/utils/pagination_utils.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/provider/restaurant_rating_provider.dart';
@@ -32,16 +33,16 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
 
   @override
   void dispose() {
+    controller.removeListener(scrollListener);
     controller.dispose();
     super.dispose();
   }
 
   void scrollListener() {
-    if (controller.offset > controller.position.maxScrollExtent - 300) {
-      context.read<RestaurantProvider>().paginate(
-            fetchMore: true,
-          );
-    }
+    PaginationUtils.paginate(
+      controller: controller,
+      provider: context.read<RestaurantProvider>(),
+    );
   }
 
   @override
