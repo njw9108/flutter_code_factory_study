@@ -6,6 +6,8 @@ import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
+import 'package:code_factory/user/provider/user_me_provider.dart';
+import 'package:code_factory/user/repository/user_me_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -62,6 +64,24 @@ class _App extends StatelessWidget {
           create: (context) {
             final repository = context.read<ProductRepository>();
             return ProductProvider(repository: repository);
+          },
+        ),
+        ProxyProvider<Dio, UserMeRepository>(
+          update: (BuildContext context, value, UserMeRepository? previous) {
+            final dio = context.read<Dio>();
+            final repository =
+                UserMeRepository(dio, baseUrl: 'http://$ip/user/me');
+            return repository;
+          },
+        ),
+        ChangeNotifierProvider<UserMeProvider>(
+          create: (context) {
+            final repository = context.read<UserMeRepository>();
+            final storage = context.read<FlutterSecureStorage>();
+            return UserMeProvider(
+              repository: repository,
+              storage: storage,
+            );
           },
         ),
       ],
