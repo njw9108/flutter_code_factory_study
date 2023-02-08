@@ -4,9 +4,9 @@ import 'package:code_factory/common/view/splash_screen.dart';
 import 'package:code_factory/product/provider/product_provider.dart';
 import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
-import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
+import 'package:code_factory/user/repository/auth_repository.dart';
 import 'package:code_factory/user/repository/user_me_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -74,13 +74,23 @@ class _App extends StatelessWidget {
             return repository;
           },
         ),
+        ProxyProvider<Dio, AuthRepository>(
+          update: (BuildContext context, value, AuthRepository? previous) {
+            final dio = context.read<Dio>();
+            final repository =
+                AuthRepository(dio: dio, baseUrl: 'http://$ip/user/me');
+            return repository;
+          },
+        ),
         ChangeNotifierProvider<UserMeProvider>(
           create: (context) {
             final repository = context.read<UserMeRepository>();
             final storage = context.read<FlutterSecureStorage>();
+            final authRepo = context.read<AuthRepository>();
             return UserMeProvider(
               repository: repository,
               storage: storage,
+              authRepository: authRepo,
             );
           },
         ),
