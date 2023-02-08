@@ -8,11 +8,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 class AuthProvider extends ChangeNotifier {
-  UserMeProvider userMeProvider;
+  final UserMeProvider userMeProvider;
+  UserModelBase? prevUserMeState = UserModelLoading();
 
   AuthProvider({
     required this.userMeProvider,
   }) {
+    print('auth provider created');
     userMeProvider.addListener(userMeListener);
   }
 
@@ -43,13 +45,18 @@ class AuthProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    print('auth provider disposed');
     userMeProvider.removeListener(userMeListener);
     super.dispose();
   }
 
   void userMeListener() {
-    print('user me provider changed');
+    if (prevUserMeState != userMeProvider.userState) {
+      print('user me provider changed');
+      print('prev : $prevUserMeState');
+      print('current : ${userMeProvider.userState}');
+      prevUserMeState = userMeProvider.userState;
+      notifyListeners();
+    }
   }
 
   //splash screen
