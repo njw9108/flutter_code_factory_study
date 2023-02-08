@@ -2,6 +2,7 @@ import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/common/provider/pagination_provider.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
+import 'package:collection/collection.dart';
 
 class RestaurantProvider
     extends PaginationProvider<RestaurantModel, RestaurantRepository> {
@@ -16,7 +17,7 @@ class RestaurantProvider
 
     final pState = cursorState as CursorPagination;
 
-    return pState.data.firstWhere((element) => element.id == id);
+    return pState.data.firstWhereOrNull((element) => element.id == id);
   }
 
   Future<void> getDetail({required String id}) async {
@@ -35,13 +36,24 @@ class RestaurantProvider
 
     final resp = await repository.getRestaurantDetail(id: id);
 
-    cursorState = pState.copyWith(
-      data: pState.data
-          .map<RestaurantModel>(
-            (e) => e.id == id ? resp : e,
-          )
-          .toList(),
-    );
+    //데이터가 없을때는 그냥 캐시의 끝에다가 데이터를 추가한다.
+    if (pState.data.where((e) => e.id == id).isEmpty) {
+      cursorState = pState.copyWith(
+        data: <RestaurantModel>[
+          ...pState.data,
+          resp,
+        ],
+      );
+    } else {
+      cursorState = pState.copyWith(
+        data: pState.data
+            .map<RestaurantModel>(
+              (e) => e.id == id ? resp : e,
+            )
+            .toList(),
+      );
+    }
+
     notifyListeners();
   }
 }
