@@ -9,6 +9,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
+  static String get routeName => 'splash';
+
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
@@ -22,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     checkToken();
   }
+
   void checkToken() async {
     final storage = context.read<FlutterSecureStorage>();
 

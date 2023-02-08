@@ -1,5 +1,9 @@
+import 'package:code_factory/common/view/root_tab.dart';
+import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
 import 'package:code_factory/user/model/user_model.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
+import 'package:code_factory/user/view/login_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +15,31 @@ class AuthProvider extends ChangeNotifier {
   }) {
     userMeProvider.addListener(userMeListener);
   }
+
+  List<GoRoute> get routes => [
+        GoRoute(
+            path: '/',
+            name: RootTab.routeName,
+            builder: (_, state) => const RootTab(),
+            routes: [
+              GoRoute(
+                path: 'restaurant/:rid',
+                builder: (_, state) => RestaurantDetailScreen(
+                  id: state.params['rid']!,
+                ),
+              ),
+            ]),
+        GoRoute(
+          path: '/splash',
+          name: SplashScreen.routeName,
+          builder: (_, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: LoginScreen.routeName,
+          builder: (_, state) => const LoginScreen(),
+        ),
+      ];
 
   @override
   void dispose() {
@@ -26,7 +55,7 @@ class AuthProvider extends ChangeNotifier {
   //splash screen
   //앱을 처음 시작했을때 토큰이 존재하는지 확인하고
   //로그인 스크린으로 보낼지 홈 스크린으로 보낼지 확인하는 과정이필요하다
-  String? redirectLogin(GoRouterState state) {
+  String? redirectLogin(BuildContext context, GoRouterState state) {
     final UserModelBase? user = userMeProvider.userState;
 
     final loggingIn = state.location == '/login';

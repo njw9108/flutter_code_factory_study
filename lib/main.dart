@@ -1,6 +1,6 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/dio/dio.dart';
-import 'package:code_factory/common/view/splash_screen.dart';
+import 'package:code_factory/common/provider/go_router_provider.dart';
 import 'package:code_factory/product/provider/product_provider.dart';
 import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
@@ -103,13 +103,24 @@ class _App extends StatelessWidget {
             return AuthProvider(userMeProvider: userMeProvider);
           },
         ),
-      ],
-      child: MaterialApp(
-        theme: ThemeData(
-          fontFamily: 'NotoSans',
+        ProxyProvider<AuthProvider, GoRouterProvider>(
+          update: (BuildContext context, auth, GoRouterProvider? previous) {
+            return GoRouterProvider(
+              provider: auth,
+            );
+          },
         ),
-        debugShowCheckedModeBanner: false,
-        home: const SplashScreen(),
+      ],
+      child: Consumer<GoRouterProvider>(
+        builder: (BuildContext context, goRouter, Widget? child) {
+          return MaterialApp.router(
+            theme: ThemeData(
+              fontFamily: 'NotoSans',
+            ),
+            debugShowCheckedModeBanner: false,
+            routerConfig: goRouter.router,
+          );
+        },
       ),
     );
   }
