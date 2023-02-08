@@ -15,6 +15,7 @@ class UserMeProvider with ChangeNotifier {
     required this.repository,
     required this.storage,
   }) {
+    print('get me call');
     getMe();
   }
 
@@ -32,6 +33,7 @@ class UserMeProvider with ChangeNotifier {
     }
     final resp = await repository.getMe();
     userState = resp;
+    print('get me ${resp.username}');
     notifyListeners();
   }
 

@@ -5,6 +5,7 @@ import 'package:code_factory/product/provider/product_provider.dart';
 import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
+import 'package:code_factory/user/provider/auth_provider.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
 import 'package:code_factory/user/repository/auth_repository.dart';
 import 'package:code_factory/user/repository/user_me_repository.dart';
@@ -92,6 +93,14 @@ class _App extends StatelessWidget {
               storage: storage,
               authRepository: authRepo,
             );
+          },
+        ),
+        ChangeNotifierProxyProvider<UserMeProvider, AuthProvider>(
+          create: (context) => AuthProvider(
+            userMeProvider: Provider.of<UserMeProvider>(context, listen: false),
+          ),
+          update: (context, userMeProvider, AuthProvider? previous) {
+            return AuthProvider(userMeProvider: userMeProvider);
           },
         ),
       ],

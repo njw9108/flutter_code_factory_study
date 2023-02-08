@@ -1,3 +1,4 @@
+import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/common/model/cursor_pagination_model.dart';
 import 'package:code_factory/common/utils/pagination_utils.dart';
@@ -9,6 +10,8 @@ import 'package:code_factory/restaurant/model/restaurant_detail_model.dart';
 import 'package:code_factory/restaurant/model/restaurant_model.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/provider/restaurant_rating_provider.dart';
+import 'package:code_factory/restaurant/repository/restaurant_rating_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
@@ -54,7 +57,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
     final model = context
         .watch<RestaurantProvider>()
         .getRestaurantDetailModel(id: widget.id);
-    final ratingData = context.watch<RestaurantRatingProvider>().cursorState;
 
     if (model == null) {
       return const DefaultLayout(
@@ -64,25 +66,52 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       );
     }
 
-    return DefaultLayout(
-      title: model.name,
-      child: CustomScrollView(
-        controller: controller,
-        slivers: [
-          renderTop(
-            model: model,
-          ),
-          if (model is! RestaurantDetailModel) renderLoading(),
-          if (model is RestaurantDetailModel) renderLabel(),
-          if (model is RestaurantDetailModel)
-            renderProducts(
-              products: model.products,
+    return MultiProvider(
+      providers: [
+        ProxyProvider<Dio, RestaurantRatingRepository>(
+          update: (BuildContext context, value,
+              RestaurantRatingRepository? previous) {
+            final dio = context.watch<Dio>();
+            final repository = RestaurantRatingRepository(
+              dio,
+              baseUrl: 'http://$ip/restaurant/${widget.id}/rating',
+            );
+            return repository;
+          },
+        ),
+        ChangeNotifierProvider<RestaurantRatingProvider>(
+          create: (context) {
+            final repository = context.read<RestaurantRatingRepository>();
+            return RestaurantRatingProvider(repository: repository);
+          },
+        ),
+      ],
+      child: Consumer<RestaurantRatingProvider>(
+        builder: (BuildContext context, provider, Widget? child) {
+          final ratingData = provider.cursorState;
+
+          return DefaultLayout(
+            title: model.name,
+            child: CustomScrollView(
+              controller: controller,
+              slivers: [
+                renderTop(
+                  model: model,
+                ),
+                if (model is! RestaurantDetailModel) renderLoading(),
+                if (model is RestaurantDetailModel) renderLabel(),
+                if (model is RestaurantDetailModel)
+                  renderProducts(
+                    products: model.products,
+                  ),
+                if (ratingData is CursorPagination<RatingModel>)
+                  renderRatings(
+                    models: ratingData.data,
+                  ),
+              ],
             ),
-          if (ratingData is CursorPagination<RatingModel>)
-            renderRatings(
-              models: ratingData.data,
-            ),
-        ],
+          );
+        },
       ),
     );
   }

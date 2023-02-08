@@ -1,7 +1,7 @@
 import 'package:code_factory/common/component/pagination_list_view.dart';
 import 'package:code_factory/restaurant/component/restaurant_card.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
-import 'package:code_factory/restaurant/view/restaurant_detail_screen_builder.dart';
+import 'package:code_factory/restaurant/view/restaurant_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +20,8 @@ class RestaurantScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RestaurantDetailScreenBuilder(
-                  restaurantId: model.id,
+                builder: (context) => RestaurantDetailScreen(
+                  id: model.id,
                 ),
               ),
             );
