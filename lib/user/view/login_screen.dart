@@ -5,6 +5,8 @@ import 'package:code_factory/common/const/colors.dart';
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/common/view/root_tab.dart';
+import 'package:code_factory/user/model/user_model.dart';
+import 'package:code_factory/user/provider/user_me_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -25,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = context.watch<UserMeProvider>().userState;
+
     return DefaultLayout(
         child: SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -66,41 +70,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () async {
-                  final storage = context.read<FlutterSecureStorage>();
-                  final dio = context.read<Dio>();
-
-                  //ID:비밀번호
-                  final rawString = '$username:$password';
-                  Codec<String, String> stringToBase64 = utf8.fuse(base64);
-
-                  String token = stringToBase64.encode(rawString);
-
-                  final resp = await dio.post(
-                    'http://$ip/auth/login',
-                    options: Options(
-                      headers: {
-                        'authorization': 'Basic $token',
+                onPressed: userState is UserModelLoading
+                    ? null
+                    : () async {
+                        context.read<UserMeProvider>().login(
+                              username: username,
+                              password: password,
+                            );
                       },
-                    ),
-                  );
-
-                  final accessToken = resp.data['accessToken'];
-                  final refreshToken = resp.data['refreshToken'];
-
-                  await storage.write(
-                      key: REFRESH_TOKEN_KEY, value: refreshToken);
-                  await storage.write(
-                      key: ACCESS_TOKEN_KEY, value: accessToken);
-
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return const RootTab();
-                      },
-                    ),
-                  );
-                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: PRIMARY_COLOR,
                 ),

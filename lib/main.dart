@@ -31,20 +31,28 @@ class _App extends StatelessWidget {
             create: (_) => const FlutterSecureStorage()),
         ProxyProvider<FlutterSecureStorage, Dio>(
           update: (BuildContext context, storage, Dio? previous) {
-            final dio = Dio();
-            dio.interceptors.add(
-              CustomInterceptor(storage: storage),
-            );
-            return dio;
+            if (previous == null) {
+              final dio = Dio();
+              dio.interceptors.add(
+                CustomInterceptor(storage: storage),
+              );
+              return dio;
+            } else {
+              return previous;
+            }
           },
         ),
         ProxyProvider<Dio, RestaurantRepository>(
           update:
               (BuildContext context, value, RestaurantRepository? previous) {
-            final dio = context.read<Dio>();
-            final repository =
-                RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
-            return repository;
+            if (previous == null) {
+              final dio = context.read<Dio>();
+              final repository =
+                  RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
+              return repository;
+            } else {
+              return previous;
+            }
           },
         ),
         ChangeNotifierProvider<RestaurantProvider>(
@@ -55,10 +63,14 @@ class _App extends StatelessWidget {
         ),
         ProxyProvider<Dio, ProductRepository>(
           update: (BuildContext context, value, ProductRepository? previous) {
-            final dio = context.read<Dio>();
-            final repository =
-                ProductRepository(dio, baseUrl: 'http://$ip/product');
-            return repository;
+            if (previous == null) {
+              final dio = context.read<Dio>();
+              final repository =
+                  ProductRepository(dio, baseUrl: 'http://$ip/product');
+              return repository;
+            } else {
+              return previous;
+            }
           },
         ),
         ChangeNotifierProvider<ProductProvider>(
@@ -69,18 +81,26 @@ class _App extends StatelessWidget {
         ),
         ProxyProvider<Dio, UserMeRepository>(
           update: (BuildContext context, value, UserMeRepository? previous) {
-            final dio = context.read<Dio>();
-            final repository =
-                UserMeRepository(dio, baseUrl: 'http://$ip/user/me');
-            return repository;
+            if (previous == null) {
+              final dio = context.read<Dio>();
+              final repository =
+                  UserMeRepository(dio, baseUrl: 'http://$ip/user/me');
+              return repository;
+            } else {
+              return previous;
+            }
           },
         ),
         ProxyProvider<Dio, AuthRepository>(
           update: (BuildContext context, value, AuthRepository? previous) {
-            final dio = context.read<Dio>();
-            final repository =
-                AuthRepository(dio: dio, baseUrl: 'http://$ip/auth');
-            return repository;
+            if (previous == null) {
+              final dio = context.read<Dio>();
+              final repository =
+                  AuthRepository(dio: dio, baseUrl: 'http://$ip/auth');
+              return repository;
+            } else {
+              return previous;
+            }
           },
         ),
         ChangeNotifierProvider<UserMeProvider>(
@@ -95,30 +115,44 @@ class _App extends StatelessWidget {
             );
           },
         ),
-        ChangeNotifierProxyProvider<UserMeProvider, AuthProvider>(
-          create: (context) => AuthProvider(
-            userMeProvider: Provider.of<UserMeProvider>(context, listen: false),
-          ),
-          update: (context, userMeProvider, AuthProvider? previous) {
-            return AuthProvider(userMeProvider: userMeProvider);
+        ChangeNotifierProxyProvider<UserMeProvider, AuthProvider?>(
+          create: (context) => null,
+          update: (context, value, AuthProvider? previous) {
+            if (previous == null) {
+              final userMeProvider =
+                  Provider.of<UserMeProvider>(context, listen: false);
+              return AuthProvider(
+                userMeProvider: userMeProvider,
+              );
+            } else {
+              return previous;
+            }
           },
         ),
         ProxyProvider<AuthProvider, GoRouterProvider>(
-          update: (BuildContext context, auth, GoRouterProvider? previous) {
-            return GoRouterProvider(
-              provider: auth,
-            );
+          update: (BuildContext context, value, GoRouterProvider? previous) {
+            if (previous == null) {
+              final authProvider =
+                  Provider.of<AuthProvider>(context, listen: false);
+              return GoRouterProvider(
+                provider: authProvider,
+              );
+            } else {
+              return previous;
+            }
           },
         ),
       ],
-      child: Consumer<GoRouterProvider>(
-        builder: (BuildContext context, goRouter, Widget? child) {
+      child: Builder(
+        builder: (context) {
+          final goRouter = context.watch<GoRouterProvider>().router;
+
           return MaterialApp.router(
             theme: ThemeData(
               fontFamily: 'NotoSans',
             ),
             debugShowCheckedModeBanner: false,
-            routerConfig: goRouter.router,
+            routerConfig: goRouter,
           );
         },
       ),

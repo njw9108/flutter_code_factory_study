@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 class AuthProvider extends ChangeNotifier {
   final UserMeProvider userMeProvider;
-  UserModelBase? prevUserMeState = UserModelLoading();
+  UserModelBase? prevUserMeState;
 
   AuthProvider({
     required this.userMeProvider,
@@ -20,17 +20,18 @@ class AuthProvider extends ChangeNotifier {
 
   List<GoRoute> get routes => [
         GoRoute(
-            path: '/',
-            name: RootTab.routeName,
-            builder: (_, state) => const RootTab(),
-            routes: [
-              GoRoute(
-                path: 'restaurant/:rid',
-                builder: (_, state) => RestaurantDetailScreen(
-                  id: state.params['rid']!,
-                ),
+          path: '/',
+          name: RootTab.routeName,
+          builder: (_, state) => const RootTab(),
+          routes: [
+            GoRoute(
+              path: 'restaurant/:rid',
+              builder: (_, state) => RestaurantDetailScreen(
+                id: state.params['rid']!,
               ),
-            ]),
+            ),
+          ],
+        ),
         GoRoute(
           path: '/splash',
           name: SplashScreen.routeName,
@@ -51,9 +52,6 @@ class AuthProvider extends ChangeNotifier {
 
   void userMeListener() {
     if (prevUserMeState != userMeProvider.userState) {
-      print('user me provider changed');
-      print('prev : $prevUserMeState');
-      print('current : ${userMeProvider.userState}');
       prevUserMeState = userMeProvider.userState;
       notifyListeners();
     }
@@ -62,14 +60,16 @@ class AuthProvider extends ChangeNotifier {
   //splash screen
   //앱을 처음 시작했을때 토큰이 존재하는지 확인하고
   //로그인 스크린으로 보낼지 홈 스크린으로 보낼지 확인하는 과정이필요하다
-  String? redirectLogin(BuildContext context, GoRouterState state) {
-    final UserModelBase? user = userMeProvider.userState;
-
+  String? redirectLogic(BuildContext context, GoRouterState state) {
+    if(userMeProvider.userState is UserModelLoading){
+      // print('user model loading');
+      // print(state.location);
+    }
     final loggingIn = state.location == '/login';
 
     //유저 정보가 없는데 로그인 중이라면 그대로 로그인 페이지에 두고
     //만약 로그인 중이 아니라면 로그인 페이지로 이동
-    if (user == null) {
+    if (userMeProvider.userState == null) {
       return loggingIn ? null : '/login';
     }
 
@@ -77,12 +77,12 @@ class AuthProvider extends ChangeNotifier {
 
     //usermodel(사용자 정보가 있음)
     //로그인 중이거나 현재 위치가 Splash Screen -> 홈으로 이동
-    if (user is UserModel) {
+    if (userMeProvider.userState is UserModel) {
       return loggingIn || state.location == '/splash' ? '/' : null;
     }
 
     //user model error
-    if (user is UserModelError) {
+    if (userMeProvider.userState is UserModelError) {
       return !loggingIn ? '/login' : null;
     }
 

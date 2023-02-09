@@ -7,13 +7,16 @@ class GoRouterProvider {
   GoRouterProvider({
     required this.provider,
   }) {
-    router = GoRouter(
+    print('go router provider created');
+    _router = GoRouter(
       routes: provider.routes,
       initialLocation: '/splash',
       refreshListenable: provider,
-      redirect: provider.redirectLogin,
+      redirect: provider.redirectLogic,
     );
   }
 
-  late GoRouter router;
+  late GoRouter _router;
+
+  GoRouter get router => _router;
 }

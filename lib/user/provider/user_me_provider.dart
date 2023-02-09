@@ -15,6 +15,7 @@ class UserMeProvider with ChangeNotifier {
     required this.repository,
     required this.storage,
   }) {
+    print('user me provider create');
     getMe();
   }
 
@@ -27,11 +28,13 @@ class UserMeProvider with ChangeNotifier {
 
     if (refreshToken == null || accessToken == null) {
       userState = null;
+      print('31-user me provider changed');
       notifyListeners();
       return;
     }
     final resp = await repository.getMe();
     userState = resp;
+    print('37-user me provider changed');
     notifyListeners();
   }
 
@@ -41,6 +44,7 @@ class UserMeProvider with ChangeNotifier {
   }) async {
     try {
       userState = UserModelLoading();
+      print('47-user me provider changed');
       notifyListeners();
 
       final resp = await authRepository.login(
@@ -53,11 +57,13 @@ class UserMeProvider with ChangeNotifier {
 
       final userResp = await repository.getMe();
       userState = userResp;
+      print('60-user me provider changed');
       notifyListeners();
 
       return userResp;
     } catch (e) {
       userState = UserModelError(message: '로그인에 실패했습니다.');
+      print('66-user me provider changed');
       notifyListeners();
       return Future.value(userState);
     }
@@ -65,6 +71,7 @@ class UserMeProvider with ChangeNotifier {
 
   Future<void> logout() async {
     userState = null;
+    print('74-user me provider changed');
     notifyListeners();
 
     await Future.wait(
