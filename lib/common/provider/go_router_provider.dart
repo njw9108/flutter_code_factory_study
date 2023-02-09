@@ -7,7 +7,6 @@ class GoRouterProvider {
   GoRouterProvider({
     required this.provider,
   }) {
-    print('go router provider created');
     _router = GoRouter(
       routes: provider.routes,
       initialLocation: '/splash',

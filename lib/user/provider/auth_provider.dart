@@ -14,7 +14,6 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider({
     required this.userMeProvider,
   }) {
-    print('auth provider created');
     userMeProvider.addListener(userMeListener);
   }
 
@@ -61,10 +60,6 @@ class AuthProvider extends ChangeNotifier {
   //앱을 처음 시작했을때 토큰이 존재하는지 확인하고
   //로그인 스크린으로 보낼지 홈 스크린으로 보낼지 확인하는 과정이필요하다
   String? redirectLogic(BuildContext context, GoRouterState state) {
-    if(userMeProvider.userState is UserModelLoading){
-      // print('user model loading');
-      // print(state.location);
-    }
     final loggingIn = state.location == '/login';
 
     //유저 정보가 없는데 로그인 중이라면 그대로 로그인 페이지에 두고
