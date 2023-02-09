@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
+  static String get routeName => 'restaurantDetail';
   final String id;
 
   const RestaurantDetailScreen({
