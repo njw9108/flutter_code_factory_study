@@ -1,8 +1,8 @@
 import 'package:code_factory/common/const/colors.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
 import 'package:code_factory/product/view/product_screen.dart';
-import 'package:code_factory/profile/profile_screen.dart';
 import 'package:code_factory/restaurant/view/restaurant_screen.dart';
+import 'package:code_factory/user/view/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class RootTab extends StatefulWidget {

@@ -79,7 +79,7 @@ class _App extends StatelessWidget {
           update: (BuildContext context, value, AuthRepository? previous) {
             final dio = context.read<Dio>();
             final repository =
-                AuthRepository(dio: dio, baseUrl: 'http://$ip/user/me');
+                AuthRepository(dio: dio, baseUrl: 'http://$ip/auth');
             return repository;
           },
         ),

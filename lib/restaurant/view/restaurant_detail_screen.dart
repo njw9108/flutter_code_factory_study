@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
 
-class RestaurantDetailScreen extends StatefulWidget {
+class RestaurantDetailScreen extends StatelessWidget {
   final String id;
 
   const RestaurantDetailScreen({
@@ -25,10 +25,49 @@ class RestaurantDetailScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<RestaurantDetailScreen> createState() => _RestaurantDetailScreenState();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ProxyProvider<Dio, RestaurantRatingRepository>(
+          update: (BuildContext context, value,
+              RestaurantRatingRepository? previous) {
+            final dio = context.watch<Dio>();
+            final repository = RestaurantRatingRepository(
+              dio,
+              baseUrl: 'http://$ip/restaurant/$id/rating',
+            );
+            return repository;
+          },
+        ),
+        ChangeNotifierProvider<RestaurantRatingProvider>(
+          create: (context) {
+            final repository = context.read<RestaurantRatingRepository>();
+            return RestaurantRatingProvider(repository: repository);
+          },
+        ),
+      ],
+      child: RestaurantDetailScreenWidget(
+        id: id,
+      ),
+    );
+  }
 }
 
-class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
+class RestaurantDetailScreenWidget extends StatefulWidget {
+  final String id;
+
+  const RestaurantDetailScreenWidget({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
+
+  @override
+  State<RestaurantDetailScreenWidget> createState() =>
+      _RestaurantDetailScreenWidgetState();
+}
+
+class _RestaurantDetailScreenWidgetState
+    extends State<RestaurantDetailScreenWidget> {
   ScrollController controller = ScrollController();
 
   @override
@@ -58,6 +97,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
         .watch<RestaurantProvider>()
         .getRestaurantDetailModel(id: widget.id);
 
+    final ratingData = context.watch<RestaurantRatingProvider>().cursorState;
+
     if (model == null) {
       return const DefaultLayout(
         child: Center(
@@ -66,52 +107,25 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       );
     }
 
-    return MultiProvider(
-      providers: [
-        ProxyProvider<Dio, RestaurantRatingRepository>(
-          update: (BuildContext context, value,
-              RestaurantRatingRepository? previous) {
-            final dio = context.watch<Dio>();
-            final repository = RestaurantRatingRepository(
-              dio,
-              baseUrl: 'http://$ip/restaurant/${widget.id}/rating',
-            );
-            return repository;
-          },
-        ),
-        ChangeNotifierProvider<RestaurantRatingProvider>(
-          create: (context) {
-            final repository = context.read<RestaurantRatingRepository>();
-            return RestaurantRatingProvider(repository: repository);
-          },
-        ),
-      ],
-      child: Consumer<RestaurantRatingProvider>(
-        builder: (BuildContext context, provider, Widget? child) {
-          final ratingData = provider.cursorState;
-
-          return DefaultLayout(
-            title: model.name,
-            child: CustomScrollView(
-              controller: controller,
-              slivers: [
-                renderTop(
-                  model: model,
-                ),
-                if (model is! RestaurantDetailModel) renderLoading(),
-                if (model is RestaurantDetailModel) renderLabel(),
-                if (model is RestaurantDetailModel)
-                  renderProducts(
-                    products: model.products,
-                  ),
-                if (ratingData is CursorPagination<RatingModel>)
-                  renderRatings(
-                    models: ratingData.data,
-                  ),
-              ],
+    return DefaultLayout(
+      title: model.name,
+      child: CustomScrollView(
+        controller: controller,
+        slivers: [
+          renderTop(
+            model: model,
+          ),
+          if (model is! RestaurantDetailModel) renderLoading(),
+          if (model is RestaurantDetailModel) renderLabel(),
+          if (model is RestaurantDetailModel)
+            renderProducts(
+              products: model.products,
             ),
-          );
-        },
+          if (ratingData is CursorPagination<RatingModel>)
+            renderRatings(
+              models: ratingData.data,
+            ),
+        ],
       ),
     );
   }

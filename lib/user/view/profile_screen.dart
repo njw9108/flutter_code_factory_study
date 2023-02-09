@@ -7,13 +7,16 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          context.read()<UserMeProvider>().logout();
-        },
-        child: Text('로그아웃'),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            context.read<UserMeProvider>().logout();
+          },
+          child: Text('로그아웃'),
+        ),
+      ],
     );
   }
 }
