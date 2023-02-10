@@ -1,15 +1,10 @@
-import 'dart:convert';
-
 import 'package:code_factory/common/component/custom_text_form_field.dart';
 import 'package:code_factory/common/const/colors.dart';
-import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/common/layout/default_layout.dart';
-import 'package:code_factory/common/view/root_tab.dart';
 import 'package:code_factory/user/model/user_model.dart';
+import 'package:code_factory/user/provider/user_login_state_provider.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userState = context.watch<UserMeProvider>().userState;
+    final userState = context.watch<UserLoginStateProvider>().userState;
 
     return DefaultLayout(
         child: SingleChildScrollView(

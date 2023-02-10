@@ -1,12 +1,15 @@
 import 'package:code_factory/common/const/data.dart';
+import 'package:code_factory/user/provider/user_login_state_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
+  final UserLoginStateProvider userLoginStateProvider;
 
   CustomInterceptor({
     required this.storage,
+    required this.userLoginStateProvider,
   });
 
   //1. 요청을 보낼때(요청을 보내기 직전)
@@ -103,6 +106,8 @@ class CustomInterceptor extends Interceptor {
         return handler.resolve(response);
       }
     } on DioError catch (e) {
+      //로그아웃
+      userLoginStateProvider.logout();
       //그대로 에러를 반환
       return handler.reject(e);
     }

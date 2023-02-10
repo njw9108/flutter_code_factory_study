@@ -6,6 +6,7 @@ import 'package:code_factory/product/repository/product_repository.dart';
 import 'package:code_factory/restaurant/provider/restaurant_provider.dart';
 import 'package:code_factory/restaurant/repository/restaurant_repository.dart';
 import 'package:code_factory/user/provider/auth_provider.dart';
+import 'package:code_factory/user/provider/user_login_state_provider.dart';
 import 'package:code_factory/user/provider/user_me_provider.dart';
 import 'package:code_factory/user/repository/auth_repository.dart';
 import 'package:code_factory/user/repository/user_me_repository.dart';
@@ -28,13 +29,29 @@ class _App extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FlutterSecureStorage>(
-            create: (_) => const FlutterSecureStorage()),
-        ProxyProvider<FlutterSecureStorage, Dio>(
-          update: (BuildContext context, storage, Dio? previous) {
+          create: (_) => const FlutterSecureStorage(),
+        ),
+        ChangeNotifierProxyProvider<FlutterSecureStorage,
+            UserLoginStateProvider?>(
+          create: (context) => null,
+          update: (context, storage, UserLoginStateProvider? previous) {
+            if (previous == null) {
+              return UserLoginStateProvider(storage: storage);
+            } else {
+              return previous;
+            }
+          },
+        ),
+        ProxyProvider2<FlutterSecureStorage, UserLoginStateProvider, Dio>(
+          update: (BuildContext context, storage, userLoginStateProvider,
+              Dio? previous) {
             if (previous == null) {
               final dio = Dio();
               dio.interceptors.add(
-                CustomInterceptor(storage: storage),
+                CustomInterceptor(
+                  storage: storage,
+                  userLoginStateProvider: userLoginStateProvider,
+                ),
               );
               return dio;
             } else {
@@ -103,26 +120,29 @@ class _App extends StatelessWidget {
             }
           },
         ),
-        ChangeNotifierProvider<UserMeProvider>(
-          create: (context) {
-            final repository = context.read<UserMeRepository>();
-            final storage = context.read<FlutterSecureStorage>();
-            final authRepo = context.read<AuthRepository>();
-            return UserMeProvider(
-              repository: repository,
-              storage: storage,
-              authRepository: authRepo,
-            );
+        ProxyProvider4<FlutterSecureStorage, UserMeRepository, AuthRepository,
+            UserLoginStateProvider, UserMeProvider>(
+          update: (BuildContext context, storage, userMeRepo, authRepo,
+              loginStateProvider, UserMeProvider? previous) {
+            if (previous == null) {
+              return UserMeProvider(
+                repository: userMeRepo,
+                storage: storage,
+                authRepository: authRepo,
+                userLoginStateProvider: loginStateProvider,
+              );
+            } else {
+              return previous;
+            }
           },
         ),
-        ChangeNotifierProxyProvider<UserMeProvider, AuthProvider?>(
+        ChangeNotifierProxyProvider<UserLoginStateProvider, AuthProvider?>(
           create: (context) => null,
-          update: (context, value, AuthProvider? previous) {
+          update: (context, userLoginStateProvider, AuthProvider? previous) {
             if (previous == null) {
-              final userMeProvider =
-                  Provider.of<UserMeProvider>(context, listen: false);
+              Provider.of<UserMeProvider>(context, listen: false);
               return AuthProvider(
-                userMeProvider: userMeProvider,
+                userLoginStateProvider: userLoginStateProvider,
               );
             } else {
               return previous;

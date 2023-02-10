@@ -1,24 +1,24 @@
 import 'package:code_factory/common/const/data.dart';
 import 'package:code_factory/user/model/user_model.dart';
+import 'package:code_factory/user/provider/user_login_state_provider.dart';
 import 'package:code_factory/user/repository/auth_repository.dart';
 import 'package:code_factory/user/repository/user_me_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class UserMeProvider with ChangeNotifier {
+class UserMeProvider {
   final AuthRepository authRepository;
   final UserMeRepository repository;
   final FlutterSecureStorage storage;
+  final UserLoginStateProvider userLoginStateProvider;
 
   UserMeProvider({
     required this.authRepository,
     required this.repository,
     required this.storage,
+    required this.userLoginStateProvider,
   }) {
     getMe();
   }
-
-  UserModelBase? userState = UserModelLoading();
 
   //내정보 가져오기
   Future<void> getMe() async {
@@ -26,22 +26,22 @@ class UserMeProvider with ChangeNotifier {
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
     if (refreshToken == null || accessToken == null) {
-      userState = null;
-      notifyListeners();
+      userLoginStateProvider.setUserState(null);
+      //notifyListeners();
       return;
     }
     final resp = await repository.getMe();
-    userState = resp;
-    notifyListeners();
+    userLoginStateProvider.setUserState(resp);
+    //notifyListeners();
   }
 
-  Future<UserModelBase> login({
+  Future<void> login({
     required String username,
     required String password,
   }) async {
     try {
-      userState = UserModelLoading();
-      notifyListeners();
+      userLoginStateProvider.setUserState(UserModelLoading());
+      //notifyListeners();
 
       final resp = await authRepository.login(
         username: username,
@@ -52,26 +52,12 @@ class UserMeProvider with ChangeNotifier {
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
 
       final userResp = await repository.getMe();
-      userState = userResp;
-      notifyListeners();
-
-      return userResp;
+      userLoginStateProvider.setUserState(userResp);
+      //notifyListeners();
     } catch (e) {
-      userState = UserModelError(message: '로그인에 실패했습니다.');
-      notifyListeners();
-      return Future.value(userState);
+      userLoginStateProvider
+          .setUserState(UserModelError(message: '로그인에 실패했습니다.'));
+      //notifyListeners();
     }
-  }
-
-  Future<void> logout() async {
-    userState = null;
-    notifyListeners();
-
-    await Future.wait(
-      [
-        storage.delete(key: REFRESH_TOKEN_KEY),
-        storage.delete(key: ACCESS_TOKEN_KEY),
-      ],
-    );
   }
 }
